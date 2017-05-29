@@ -13,13 +13,11 @@ stroke(255);
 
 void draw(){
   
-  //Limpiamos la pantalla y nos preparamos para dibujar
+  //Limpiamos la pantalla
   background(0);
   noFill();
-  translate(512, 300, 200);
-  
+ 
   //Calculamos la posicion del portero
-  
   //Comprobamos si la pelota esta en movimiento y en caso de estarlo calculamos posicion de la pelota 
   
   //Dibujamos todos los elementos, la curva unicamente si el usuario esta calculando donde disparar el balon
@@ -28,12 +26,17 @@ void draw(){
   
   //Modificamos el contador de puntos
  
+   //Campo
+    pintarCampo();
+   
+   stroke(255);
+   translate(512, 300, 200);
    //Pelota
   pushMatrix();
     translate(0, (int)fCentroPelotaY, (int)fCentroPelotaZ);
     sphere(10);
   popMatrix();
-  
+  stroke(0);
   //Dibujamos porteria
   pushMatrix();
     translate(-150, -180, -150);
@@ -66,4 +69,18 @@ void mouseReleased(){
 
 
 
+}
+
+//Esta funcion pinta una linea de punta a punta de la pantalla por cada pixel de las y de acuerdo al color que le corresponde.
+void pintarCampo(){
+  
+   for(int i = 0; i < height; i ++){
+     if(i <= 100)stroke(150, 155, 150);
+     else if(i <= 200)stroke(80, 160, 30);
+     else if(i <= 300)stroke(120, 250, 40);
+     else if(i <= 400)stroke(80, 160, 30);
+     else if(i <= 500)stroke(120, 250, 40);
+     else if(i <= 600)stroke(80, 160, 30);
+     line(0, i, 0, width, i, 0);
+   }
 }
