@@ -1,111 +1,21 @@
-//Variables
+int iFaseJuego = 0;
+float fPosicionXPelota = 512.0f, fPosicionYPelota = 450.0f, fPosicionZPelota = 200.0f, fPosicionXDisparo, fPosicionYDisparo, fPosicionZDisparo = 0.0f, fPosicionXControl, fPosicionYControl, fPosicionZControl = 100.0f, fPosicionXCurva,  fPosicionYCurva,  fPosicionZCurva, fTBezierBalon = 0.0f;
 
-double fCentroPelotaY = 150.0f;
-double fCentroPelotaZ = 0.0f;
-boolean bObjetivo = false;
-int iObjetivoX, iObjetivoY;
+//El campo se encuentra en el plano z = 0 y el balon en el plano Z = 200
 
 void setup() {
 
   size(1024, 600, P3D);
   stroke(255);
-  noCursor();
+  //noCursor();
 }
 
 void draw() {
 
   //Limpiamos la pantalla
   clear();
-  //noFill();
 
-  //Pintamos el campo
-  pintarCampo();
-
-  //Si no se ha seleccionado donde disparar dibujamos el cursor
-  pintarCursor();
-  
-  //En caso de que haya objetivo lo pintamos
-  if(bObjetivo)pintarObjetivo();
-   
-
-
-  //Calculamos la posicion del portero
-  //Comprobamos si la pelota esta en movimiento y en caso de estarlo calculamos posicion de la pelota 
-
-  //Dibujamos todos los elementos, la curva unicamente si el usuario esta calculando donde disparar el balon
-
-  //Comprobamos si hay colision entre el portero y la pelota
-
-  //Modificamos el contador de puntos
-
-
-
-  translate(512, 300, 200);
-  //Pelota
-  pushMatrix();
-  translate(0, (int)fCentroPelotaY, (int)fCentroPelotaZ);
-  sphere(10);
-  popMatrix();
-  stroke(0);
-  //Dibujamos porteria
-  pushMatrix();
-  translate(-150, -180, -150);
-  line(0, 0, 0, 0, -70, 0);
-  translate(0, -70, 0);
-  line(0, 0, 0, 300, 0, 0);
-  translate(300, 0, 0);
-  line(0, 0, 0, 0, 70, 0);
-  popMatrix();
-
-  /*if (fCentroPelotaZ > -150) {
-    fCentroPelotaY -= 1.0; 
-    fCentroPelotaZ -= 0.42857143;
-  } 
-  println("Y = " + fCentroPelotaY + "Z = " + fCentroPelotaZ);*/
-}
-
-//Comprobamos si el usuario esta pulsando el boton para empezar a dibujar la trayectoria de la pelota, almacenamos la posicion inicial de donde hace click
-void mousePressed() {
-  
-  if(!bObjetivo){
-  iObjetivoX = mouseX;
-  iObjetivoY = mouseY;
-  bObjetivo = true;
-  }
-  
-}
-
-//Utilizando el punto inicial donde hizo click y la posicion donde se encuentra el raton calculamos todos los puntos de la curva
-void mouseDragged() {
-}
-
-//A la que soltemos el boton del raton se iniciara el lanzamiento del balon hacia la porteria
-void mouseReleased() {
-}
-
-
-
-/************************ Pintar Campo ****************************
- - Explicacion
- Para cada Y asigna un color y pinta una linea horizontal 
- de punta a punta de la pantalla para simular un campo de futbol.
- 
- - Parametros de entrada
- Ninguno
- 
- - Modifica valores
- Ninguno
- 
- - Utiliza variables globales
- height, width
- 
- - Llama funciones
- stroke()
- line()
- ******************************************************************/
-
-void pintarCampo() {
-
+  //Pintamos el campo 
   stroke(130, 240, 255);
   for (int i = 0; i < height; i ++) {
 
@@ -115,63 +25,118 @@ void pintarCampo() {
     line(0, i, 0, width, i, 0);
   }
   stroke(255);
+
+  //Pintamos la porteria
+  pushMatrix();
+    translate(362, 100, 0);
+    line(0, 0, 0, 0, -70, 0);
+    translate(0, -70, 0);
+    line(0, 0, 0, 300, 0, 0);
+    translate(300, 0, 0);
+    line(0, 0, 0, 0, 70, 0);
+  popMatrix();
+
+
+  //Si estamos en la fase 0 pintaremos un cursor para que el usuario elija el punto objetivo del disparo
+  if (iFaseJuego == 0) {
+
+    stroke(255, 0, 0);
+    line(mouseX - 10, mouseY - 10, mouseX + 10, mouseY + 10);
+    line(mouseX + 10, mouseY - 10, mouseX - 10, mouseY + 10);
+    stroke(255);
+  }
+
+  //Si estamos en la fase 1 pintaremos la posicion seleccionada por el jugador con una esfera dado que el punto al no poderse modificar su tamaño no se puede ver.
+  if (iFaseJuego > 0 && iFaseJuego < 3) {
+
+    stroke(255, 0, 0);
+    pushMatrix();
+    translate(fPosicionXDisparo, fPosicionYDisparo, fPosicionZDisparo);
+    sphere(3);
+    popMatrix();
+    stroke(255);
+  }
+  
+  //Dibujamos trayectoria entre los puntos
+   if (iFaseJuego == 2) {
+      stroke(0);
+      for(float t = 0.0; t < 0.8; t += 0.05f){
+      
+       fPosicionXCurva = pow(1-t,2)*fPosicionXPelota+2*(1-t)*t*fPosicionXControl + t*t*fPosicionXDisparo;
+       fPosicionYCurva = pow(1-t,2)*fPosicionYPelota+2*(1-t)*t*fPosicionYControl + t*t*fPosicionYDisparo;
+       fPosicionZCurva = pow(1-t,2)*fPosicionZPelota+2*(1-t)*t*fPosicionZControl + t*t*fPosicionZDisparo;
+      pushMatrix();
+      translate(fPosicionXCurva, fPosicionYCurva, fPosicionZCurva);
+      sphere(3);
+      popMatrix();
+      
+      }
+     stroke(255);
+  }
+
+  //Calculamos posicion pelota usando bezier
+
+  //Calculamos posicion portero
+
+  //Dibujamos pelota
+  if(iFaseJuego < 3){
+  pushMatrix();
+    translate(fPosicionXPelota, fPosicionYPelota, fPosicionZPelota);
+    sphere(10);
+  popMatrix();
+  }
+  
+  if(iFaseJuego == 3){
+
+      
+       fPosicionXCurva = pow(1-fTBezierBalon,2)*fPosicionXPelota+2*(1-fTBezierBalon)*fTBezierBalon*fPosicionXControl + fTBezierBalon*fTBezierBalon*fPosicionXDisparo;
+       fPosicionYCurva = pow(1-fTBezierBalon,2)*fPosicionYPelota+2*(1-fTBezierBalon)*fTBezierBalon*fPosicionYControl + fTBezierBalon*fTBezierBalon*fPosicionYDisparo;
+       fPosicionZCurva = pow(1-fTBezierBalon,2)*fPosicionZPelota+2*(1-fTBezierBalon)*fTBezierBalon*fPosicionZControl + fTBezierBalon*fTBezierBalon*fPosicionZDisparo;
+       
+      pushMatrix();
+      translate(fPosicionXCurva, fPosicionYCurva, fPosicionZCurva);
+      sphere(10);
+      popMatrix();
+      
+      if(fTBezierBalon < 1){
+      
+      fTBezierBalon += 0.005;
+      
+      }
+      
+  
+  }
+  stroke(0);
+
+  //Dibujamos portero
 }
 
+void mouseClicked() {
 
-/************************ Pintar Cursor ****************************
- - Explicacion
- Dibuja una cruz en pantalla que usaremos para indicar en que lugar
- queremos disparar el balon. El centro de la cruz es la posicion del
- mouse.
- 
- - Parametros de entrada
- Ninguno
- 
- - Modifica valores
- Ninguno
- 
- - Utiliza variables globales
- mouseX, mouseY
- 
- - Llama funciones
- stroke()
- line()
- ******************************************************************/
-
-void pintarCursor() {
-
-  stroke(255, 0, 0);
-  line(mouseX - 10, mouseY - 10, mouseX + 10, mouseY + 10 );
-  line(mouseX + 10, mouseY - 10, mouseX - 10, mouseY + 10 );
-  stroke(255);
+  if (iFaseJuego == 0) {
+    fPosicionXDisparo = mouseX;
+    fPosicionYDisparo = mouseY;
+    iFaseJuego = 1;
+  
+  }
 }
 
-/************************ Pintar Objetivo ****************************
- - Explicacion
-Dibujamos una elipse donde el objetivo que indica el usuario para que
-sepa a donde ira el balon
- 
- - Parametros de entrada
- Ninguno
- 
- - Modifica valores
- Ninguno
- 
- - Utiliza variables globales
- iObjetivoX, iObjetivoY
- 
- - Llama funciones
- stroke()
- strokeWeight()
- ellipse()
- ******************************************************************/
+void mousePressed() {
 
-void pintarObjetivo(){
+  if (iFaseJuego == 1) {
+    iFaseJuego = 2;
+  }
+}
 
-  stroke(255, 0, 0);
-  strokeWeight(5);
-  ellipse(iObjetivoX, iObjetivoY, 5, 5);
-  strokeWeight(1);
-  stroke(255);
+void mouseReleased() {
+  if (iFaseJuego == 2) {
+    iFaseJuego = 3;
+  }
+}
+void mouseDragged() {
 
+  if (iFaseJuego == 2) {
+    fPosicionXControl = 512 + (512 - mouseX);
+    fPosicionYControl = 600 + (300 - mouseY);
+  }
 }
