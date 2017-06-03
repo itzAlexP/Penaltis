@@ -2,6 +2,7 @@ int iFaseJuego = 0;
 float fPosicionXPortero = 480, fPosicionYPortero = 150, fPosicionXPelota = 512.0f, fPosicionYPelota = 450.0f, fPosicionZPelota = 200.0f, fPosicionXDisparo, fPosicionYDisparo, fPosicionZDisparo = 0.0f, fPosicionXControl, fPosicionYControl, fPosicionZControl = 100.0f, fPosicionXCurva,  fPosicionYCurva,  fPosicionZCurva, fTBezierBalon = 0.0f;
 boolean bMovimientoPortero = true, bMovimiento = true;
 PImage photo;
+
 //El campo se encuentra en el plano z = 0 y el balon en el plano Z = 200
 
 void setup() {
@@ -82,7 +83,6 @@ void draw() {
    if (iFaseJuego == 2 && mouseX > 0 && mouseX < 1024 && mouseY < 600 && mouseY > 525) {
       stroke(0);
       for(float t = 0.0; t < 0.8; t += 0.05f){
-      
        fPosicionXCurva = pow(1-t,2)*fPosicionXPelota+2*(1-t)*t*fPosicionXControl + t*t*fPosicionXDisparo;
        fPosicionYCurva = pow(1-t,2)*fPosicionYPelota+2*(1-t)*t*fPosicionYControl + t*t*fPosicionYDisparo;
        fPosicionZCurva = pow(1-t,2)*fPosicionZPelota+2*(1-t)*t*fPosicionZControl + t*t*fPosicionZDisparo;
@@ -97,14 +97,14 @@ void draw() {
   
   
 
-  //Calculamos posicion pelota usando bezier
+
 
   //Calculamos posicion portero
 
-  if(bMovimientoPortero && bMovimiento)fPosicionXPortero += 5;
-  if(!bMovimientoPortero && bMovimiento)fPosicionXPortero -= 5;
-  if(fPosicionXPortero < 350) bMovimientoPortero = true;
-  if(fPosicionXPortero > 620) bMovimientoPortero = false;
+  if(bMovimientoPortero && bMovimiento)fPosicionXPortero += 8;
+  if(!bMovimientoPortero && bMovimiento)fPosicionXPortero -= 8;
+  if(fPosicionXPortero < 250) bMovimientoPortero = true;
+  if(fPosicionXPortero > 650) bMovimientoPortero = false;
 
   //Dibujamos pelota estatica
   if(iFaseJuego < 3){
@@ -122,7 +122,7 @@ void draw() {
        fPosicionYCurva = pow(1-fTBezierBalon,2)*fPosicionYPelota+2*(1-fTBezierBalon)*fTBezierBalon*fPosicionYControl + fTBezierBalon*fTBezierBalon*fPosicionYDisparo;
        fPosicionZCurva = pow(1-fTBezierBalon,2)*fPosicionZPelota+2*(1-fTBezierBalon)*fTBezierBalon*fPosicionZControl + fTBezierBalon*fTBezierBalon*fPosicionZDisparo;
        
-       
+      
       pushMatrix();
       translate(fPosicionXCurva, fPosicionYCurva, fPosicionZCurva);
       sphere(10);
@@ -130,21 +130,32 @@ void draw() {
       
 
       if(fTBezierBalon < 1){
-      
-      fTBezierBalon += 0.005;
+      fTBezierBalon += 0.01;
       
       }
       
-      //Comprobamos si el portero paro el balon
+      //Paramos el portero
       if(fTBezierBalon >= 1){
         bMovimiento = false;
-        if(fPosicionXCurva - 10 >= fPosicionXPortero && fPosicionXCurva + 10 <=  fPosicionXPortero + 50){
         
-        
-        }else{print("");}
-      
+          
       }
       
+      //Comprobamos si el portero para el balon. 
+  
+      if(fPosicionYCurva <= 220 && fPosicionYCurva >= 150) {
+       
+         //Pelota izquierda portero
+     if(fPosicionXCurva - 10 < fPosicionXPortero){if(fPosicionXCurva + 10 - fPosicionXPortero >= 0);}
+     
+     //Pelota interior portero
+     if(fPosicionXCurva - 10 >= fPosicionXPortero  && fPosicionXCurva + 10 <= fPosicionXPortero + 50);
+     
+     //Pelota derecha portero
+     if(fPosicionXCurva + 10 > fPosicionXPortero + 50){if(fPosicionXCurva - 10 - fPosicionXPortero + 50 >= 0); }
+      
+      }
+   
       
       
   
@@ -168,6 +179,12 @@ void mouseClicked() {
     iFaseJuego = 1;
   
   }
+  
+  if(iFaseJuego == 3 && fTBezierBalon >= 1.0f){
+  iFaseJuego = 0;
+  bMovimiento = true;
+  fTBezierBalon = 0.0f;
+  }
 }
 
 void mousePressed() {
@@ -175,6 +192,10 @@ void mousePressed() {
   if (iFaseJuego == 1) {
     iFaseJuego = 2;
   }
+  
+  
+  
+  
 }
 
 void mouseReleased() {
