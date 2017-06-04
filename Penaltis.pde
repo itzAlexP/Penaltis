@@ -1,4 +1,4 @@
-int iFaseJuego = 0;
+int iFaseJuego = 0, iGoles = 0, iVidas = 3, iVelocidadPortero = 8;
 float fPosicionXPortero = 480, fPosicionYPortero = 150, fPosicionXPelota = 512.0f, fPosicionYPelota = 450.0f, fPosicionZPelota = 200.0f, fPosicionXDisparo, fPosicionYDisparo, fPosicionZDisparo = 0.0f, fPosicionXControl, fPosicionYControl, fPosicionZControl = 100.0f, fPosicionXCurva,  fPosicionYCurva,  fPosicionZCurva, fTBezierBalon = 0.0f;
 boolean bMovimientoPortero = true, bMovimiento = true;
 PImage photo;
@@ -13,11 +13,9 @@ void setup() {
 }
 
 void draw() {
-  
   //Limpiamos la pantalla
   clear();
  
-
   //Pintamos el campo 
   stroke(130, 240, 255);
   for (int i = 0; i < height; i ++) {
@@ -60,7 +58,7 @@ void draw() {
 
 
   //Si estamos en la fase 0 pintaremos un cursor para que el usuario elija el punto objetivo del disparo
-  if (iFaseJuego == 0) {
+  if (iFaseJuego == 0 && mouseX > 365 && mouseX < 660 && mouseY > 37 && mouseY < 100) {
 
     stroke(255, 0, 0);
     line(mouseX - 10, mouseY - 10, mouseX + 10, mouseY + 10);
@@ -100,11 +98,10 @@ void draw() {
 
 
   //Calculamos posicion portero
-
-  if(bMovimientoPortero && bMovimiento)fPosicionXPortero += 8;
-  if(!bMovimientoPortero && bMovimiento)fPosicionXPortero -= 8;
-  if(fPosicionXPortero < 250) bMovimientoPortero = true;
-  if(fPosicionXPortero > 650) bMovimientoPortero = false;
+  if(bMovimientoPortero && bMovimiento)fPosicionXPortero += iVelocidadPortero;
+  if(!bMovimientoPortero && bMovimiento)fPosicionXPortero -= iVelocidadPortero;
+  if(fPosicionXPortero < 100) bMovimientoPortero = true;
+  if(fPosicionXPortero > 840) bMovimientoPortero = false;
 
   //Dibujamos pelota estatica
   if(iFaseJuego < 3){
@@ -129,15 +126,14 @@ void draw() {
       popMatrix();
       
 
-      if(fTBezierBalon < 1){
+      if(fTBezierBalon < 1 && bMovimiento){
       fTBezierBalon += 0.01;
       
       }
       
       //Paramos el portero
       if(fTBezierBalon >= 1){
-        bMovimiento = false;
-        
+                
           
       }
       
@@ -145,26 +141,23 @@ void draw() {
   
       if(fPosicionYCurva <= 220 && fPosicionYCurva >= 150) {
        
-         //Pelota izquierda portero
-     if(fPosicionXCurva - 10 < fPosicionXPortero){if(fPosicionXCurva + 10 - fPosicionXPortero >= 0);}
+      //Pelota izquierda portero
+     if(fPosicionXCurva - 10 < fPosicionXPortero && fPosicionXCurva + 10 - fPosicionXPortero >= 0 || fPosicionXCurva - 10 >= fPosicionXPortero  && fPosicionXCurva + 10 <= fPosicionXPortero + 50 || fPosicionXCurva + 10 > fPosicionXPortero + 50 && fPosicionXCurva - 10 - fPosicionXPortero + 50 <= 0 ){
+         iVidas --;
+        iFaseJuego = 0;
+        fTBezierBalon = 0.0f;
+  
+     }
      
-     //Pelota interior portero
-     if(fPosicionXCurva - 10 >= fPosicionXPortero  && fPosicionXCurva + 10 <= fPosicionXPortero + 50);
-     
-     //Pelota derecha portero
-     if(fPosicionXCurva + 10 > fPosicionXPortero + 50){if(fPosicionXCurva - 10 - fPosicionXPortero + 50 >= 0); }
+   
       
       }
    
-      
-      
-  
   }
   stroke(0);
 
   //Dibujamos portero
-  
-  pushMatrix();
+   pushMatrix();
   translate(fPosicionXPortero, fPosicionYPortero, 1);
   image(photo, 0, 0);
   popMatrix();
@@ -173,7 +166,7 @@ void draw() {
 
 void mouseClicked() {
 
-  if (iFaseJuego == 0) {
+  if (iFaseJuego == 0 && mouseX > 365 && mouseX < 660 && mouseY > 32 && mouseY < 100) {
     fPosicionXDisparo = mouseX;
     fPosicionYDisparo = mouseY;
     iFaseJuego = 1;
@@ -181,9 +174,12 @@ void mouseClicked() {
   }
   
   if(iFaseJuego == 3 && fTBezierBalon >= 1.0f){
-  iFaseJuego = 0;
-  bMovimiento = true;
-  fTBezierBalon = 0.0f;
+     
+    iGoles++;
+    iFaseJuego = 0;
+    fTBezierBalon = 0.0f;
+    iVelocidadPortero ++;
+
   }
 }
 
