@@ -1,7 +1,32 @@
-int iFaseJuego = 0, iGoles = 0, iVidas = 3, iVelocidadPortero = 8;
-float fPosicionXPortero = 480, fPosicionYPortero = 150, fPosicionXPelota = 512.0f, fPosicionYPelota = 450.0f, fPosicionZPelota = 200.0f, fPosicionXDisparo, fPosicionYDisparo, fPosicionZDisparo = 0.0f, fPosicionXControl, fPosicionYControl, fPosicionZControl = 100.0f, fPosicionXCurva,  fPosicionYCurva,  fPosicionZCurva, fTBezierBalon = 0.0f;
-boolean bMovimientoPortero = true, bMovimiento = true;
-PImage photo;
+int 
+iFaseJuego = 0, 
+iGoles = 0, 
+iVidas = 3, 
+iVelocidadPortero = 8;
+
+float
+fPosicionXPortero = 480, 
+fPosicionYPortero = 150, 
+fPosicionXPelota = 512.0f, 
+fPosicionYPelota = 450.0f, 
+fPosicionZPelota = 200.0f, 
+fPosicionXDisparo, 
+fPosicionYDisparo, 
+fPosicionZDisparo = 0.0f, 
+fPosicionXControl, 
+fPosicionYControl, 
+fPosicionZControl = 100.0f, 
+fPosicionXCurva,  
+fPosicionYCurva,  
+fPosicionZCurva, 
+fTBezierBalon = 0.0f;
+
+boolean 
+bMovimientoPortero = true, 
+bMovimiento = true;
+
+PImage 
+photo;
 
 //El campo se encuentra en el plano z = 0 y el balon en el plano Z = 200
 
@@ -79,7 +104,7 @@ text("Game over\n Score:" + iGoles, 37, 45);
 noFill();
 popMatrix();
   //Si estamos en la fase 0 pintaremos un cursor para que el usuario elija el punto objetivo del disparo
-  if (iFaseJuego == 0 && mouseX > 365 && mouseX < 660 && mouseY > 37 && mouseY < 100) {
+  if (iFaseJuego == 0 && mouseX > 365 && mouseX < 660 && mouseY > 37 && mouseY < 100 && iVidas > 0) {
 
     stroke(255, 0, 0);
     line(mouseX - 10, mouseY - 10, mouseX + 10, mouseY + 10);
@@ -163,7 +188,7 @@ popMatrix();
        
       //Pelota izquierda portero
      if(fPosicionXCurva - 10 < fPosicionXPortero && fPosicionXCurva + 10 - fPosicionXPortero >= 0 || fPosicionXCurva - 10 >= fPosicionXPortero  && fPosicionXCurva + 10 <= fPosicionXPortero + 50 || fPosicionXCurva + 10 > fPosicionXPortero + 50 && fPosicionXCurva - 10 - fPosicionXPortero + 50 <= 0 ){
-         iVidas --;
+        iVidas --;
         iFaseJuego = 0;
         fTBezierBalon = 0.0f;
   
@@ -186,7 +211,7 @@ popMatrix();
 
 void mouseClicked() {
 
-  if (iFaseJuego == 0 && mouseX > 365 && mouseX < 660 && mouseY > 32 && mouseY < 100) {
+  if (iFaseJuego == 0 && mouseX > 365 && mouseX < 660 && mouseY > 32 && mouseY < 100 && iVidas > 0) {
     fPosicionXDisparo = mouseX;
     fPosicionYDisparo = mouseY;
     iFaseJuego = 1;
@@ -224,4 +249,18 @@ void mouseDragged() {
     fPosicionXControl = 512 + (512 - mouseX);
     fPosicionYControl = 600 + (300 - mouseY);
   }
+}
+
+void keyPressed() {
+
+if(keyCode == ENTER && iVidas <= 0){
+  
+    iGoles = 0;
+    iFaseJuego = 0;
+    fTBezierBalon = 0.0f;
+    iVelocidadPortero = 8;
+    iVidas = 3;
+
+}
+
 }
