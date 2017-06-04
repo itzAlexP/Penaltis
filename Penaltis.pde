@@ -10,12 +10,14 @@ void setup() {
   size(1024, 600, P3D);
   stroke(255);
   photo = loadImage("portero.png");
+  textFont(createFont("arial", 14));
 }
 
 void draw() {
   //Limpiamos la pantalla
   clear();
- 
+   background(0);
+   
   //Pintamos el campo 
   stroke(130, 240, 255);
   for (int i = 0; i < height; i ++) {
@@ -44,6 +46,9 @@ void draw() {
   popMatrix();
   strokeWeight(1);
 
+
+ 
+
   //Pintamos la porteria
   strokeWeight(5);
   pushMatrix();
@@ -55,8 +60,24 @@ void draw() {
     line(0, 0, 0, 0, 70, 0);
   popMatrix();
   strokeWeight(1);
-
-
+ 
+pushMatrix();
+translate(0, 0, 1);
+strokeWeight(3);
+fill(0);
+rect(30, 20, 80, 55, 10, 10, 10, 10);
+strokeWeight(1);
+translate(0, 0, 1);
+fill(255);
+if(iVidas > 0){
+text("Vidas: " + iVidas, 40, 40);
+text("Goles: " + iGoles, 40, 60);
+}else{  
+  textSize(13);
+text("Game over\n Score:" + iGoles, 37, 45);
+}
+noFill();
+popMatrix();
   //Si estamos en la fase 0 pintaremos un cursor para que el usuario elija el punto objetivo del disparo
   if (iFaseJuego == 0 && mouseX > 365 && mouseX < 660 && mouseY > 37 && mouseY < 100) {
 
@@ -68,7 +89,6 @@ void draw() {
 
   //Si estamos en la fase 1 pintaremos la posicion seleccionada por el jugador con una esfera dado que el punto al no poderse modificar su tamaño no se puede ver.
   if (iFaseJuego > 0 && iFaseJuego < 3) {
-
     stroke(255, 0, 0);
     pushMatrix();
     translate(fPosicionXDisparo, fPosicionYDisparo, fPosicionZDisparo);
@@ -184,12 +204,11 @@ void mouseClicked() {
 }
 
 void mousePressed() {
+  
 
-  if (iFaseJuego == 1) {
-    iFaseJuego = 2;
-  }
+if(iFaseJuego == 1 && mouseX < 532 && mouseX > 492 && mouseY > 524 && mouseY < 560  ){iFaseJuego = 2;}
   
-  
+
   
   
 }
